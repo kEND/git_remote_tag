@@ -7,12 +7,12 @@ class ParamReaderTest < Test::Unit::TestCase
   context 'read_params' do
     context "when on a valid branch" do
       setup do
-        grb.stubs(:capture_process_output).returns([0, REGULAR_BRANCH_LISTING])
+        grt.stubs(:capture_process_output).returns([0, REGULAR_BRANCH_LISTING])
       end
       
       context "on a normal valid command without an origin" do
         setup do
-          @p = grb.read_params %w{create the_branch}
+          @p = grt.read_params %w{create the_branch}
         end
         
         should_set_action_to :create
@@ -25,7 +25,7 @@ class ParamReaderTest < Test::Unit::TestCase
 
       context "on a normal valid command" do
         setup do
-          @p = grb.read_params %w{create the_branch the_origin}
+          @p = grt.read_params %w{create the_branch the_origin}
         end
         
         should_set_action_to :create
@@ -45,7 +45,7 @@ class ParamReaderTest < Test::Unit::TestCase
       context "understands the --silent parameter" do
         context "at the beginning" do
           setup do
-            @p = grb.read_params %w{--silent create some_branch some_origin}
+            @p = grt.read_params %w{--silent create some_branch some_origin}
           end
           should_set_silent_to true
           should_set_action_to :create
@@ -55,7 +55,7 @@ class ParamReaderTest < Test::Unit::TestCase
 
         context "at the end" do
           setup do
-            @p = grb.read_params %w{create some_branch some_origin --silent}
+            @p = grt.read_params %w{create some_branch some_origin --silent}
           end
           should_set_silent_to true
           should_set_action_to :create
@@ -65,7 +65,7 @@ class ParamReaderTest < Test::Unit::TestCase
 
         context "in the freakin' middle" do
           setup do
-            @p = grb.read_params %w{create --silent some_branch some_origin}
+            @p = grt.read_params %w{create --silent some_branch some_origin}
           end
           should_set_silent_to true
           should_set_action_to :create
@@ -77,10 +77,10 @@ class ParamReaderTest < Test::Unit::TestCase
     
     context "when on an invalid branch" do
       setup do
-        grb.stubs(:capture_process_output).returns([0, BRANCH_LISTING_WHEN_NOT_ON_BRANCH])
+        grt.stubs(:capture_process_output).returns([0, BRANCH_LISTING_WHEN_NOT_ON_BRANCH])
       end
       
-      GitRemoteBranch::COMMANDS.each_key do |action|
+      GitRemoteTag::COMMANDS.each_key do |action|
         context "running the '#{action}' command" do
           setup do
             @command = [action.to_s, 'branch_name']
@@ -89,13 +89,13 @@ class ParamReaderTest < Test::Unit::TestCase
           context "raising an exception" do
             setup do
               begin
-                grb.read_params(@command)
+                grt.read_params(@command)
               rescue => @ex
               end
             end
             
-            should "raise an InvalidBranchError" do
-              assert_kind_of GitRemoteBranch::InvalidBranchError, @ex
+            should "raise an InvalidTagError" do
+              assert_kind_of GitRemoteTag::InvalidTagError, @ex
             end
 
             should "give a clear error message" do
@@ -118,7 +118,7 @@ class ParamReaderTest < Test::Unit::TestCase
     
     context "when not on a git repository" do
       setup do
-        grb.stubs(:capture_process_output).returns([128, WHEN_NOT_ON_GIT_REPOSITORY])
+        grt.stubs(:capture_process_output).returns([128, WHEN_NOT_ON_GIT_REPOSITORY])
       end
       
       should_explain_with_current_branch 'current_branch', "use a dummy value for the current branch"
@@ -127,7 +127,7 @@ class ParamReaderTest < Test::Unit::TestCase
       should_return_help_for_parameters %w(create), "on an incomplete command"
       should_return_help_for_parameters %w(decombobulate something), "on an invalid command"
 
-      GitRemoteBranch::COMMANDS.each_key do |action|
+      GitRemoteTag::COMMANDS.each_key do |action|
         context "running the '#{action}' command" do
           setup do
             @command = [action.to_s, 'branch_name']
@@ -136,13 +136,13 @@ class ParamReaderTest < Test::Unit::TestCase
           context "raising an exception" do
             setup do
               begin
-                grb.read_params(@command)
+                grt.read_params(@command)
               rescue => @ex
               end
             end
             
             should "raise an NotOnGitRepositoryError" do
-              assert_kind_of GitRemoteBranch::NotOnGitRepositoryError, @ex
+              assert_kind_of GitRemoteTag::NotOnGitRepositoryError, @ex
             end
 
             should "give a clear error message" do
@@ -161,15 +161,15 @@ class ParamReaderTest < Test::Unit::TestCase
       end
 
       should "return true" do
-        assert grb.explain_mode!(@array)
+        assert grt.explain_mode!(@array)
       end
 
       should 'accept symbol arrays as well' do
-        assert grb.explain_mode!( @array.map{|e| e.to_sym} )
+        assert grt.explain_mode!( @array.map{|e| e.to_sym} )
       end
 
       should "remove 'explain' from the argument array" do
-        grb.explain_mode!(@array)
+        grt.explain_mode!(@array)
         assert_equal ['create', 'some_branch'], @array
       end
     end
@@ -180,35 +180,35 @@ class ParamReaderTest < Test::Unit::TestCase
       end
 
       should "return false" do
-        assert_false grb.explain_mode!(@array)
+        assert_false grt.explain_mode!(@array)
       end
 
       should "not modify the argument array" do
-        grb.explain_mode!(@array)
+        grt.explain_mode!(@array)
         assert_equal ['create', 'some_branch'], @array
       end
     end
   end
   
   context 'get_action' do
-    GitRemoteBranch::COMMANDS.each_pair do |cmd, params|
+    GitRemoteTag::COMMANDS.each_pair do |cmd, params|
       should "recognize all #{cmd} aliases" do
         params[:aliases].each do |alias_|
-          assert cmd, grb.get_action(alias_) 
+          assert cmd, grt.get_action(alias_) 
         end
       end
     end
     should 'return nil on unknown aliases' do
-      assert_nil grb.get_action('please_dont_create_an_alias_named_like_this')
+      assert_nil grt.get_action('please_dont_create_an_alias_named_like_this')
     end  
   end
 
   context 'get_origin' do
     should "default to 'origin' when the param is nil" do
-      assert_equal 'origin', grb.get_origin(nil)
+      assert_equal 'origin', grt.get_origin(nil)
     end
     should "return the unchanged param if it's not nil" do
-      assert_equal 'someword', grb.get_origin('someword')
+      assert_equal 'someword', grt.get_origin('someword')
     end
   end
 

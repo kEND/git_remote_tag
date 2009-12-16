@@ -1,4 +1,4 @@
-module GitRemoteBranch
+module GitRemoteTag
   
   private 
   HELP_PARAMS = {:action => :help}
@@ -25,7 +25,7 @@ module GitRemoteBranch
       p[:branch] ||= "branch_to_#{p[:action]}"
       p[:current_branch] = begin
         get_current_branch
-      rescue NotOnGitRepositoryError, InvalidBranchError
+      rescue NotOnGitRepositoryError, InvalidTagError
         'current_branch'
       end
 

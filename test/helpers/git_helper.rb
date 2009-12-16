@@ -8,7 +8,7 @@ require File.dirname(__FILE__) + '/temp_dir_helper'
 # remote, local1 and local2.
 class GitHelper < TempDirHelper
   include InDir
-  GIT = GitRemoteBranch::GIT
+  GIT = GitRemoteTag::GIT
   
   attr_reader :remote, :local1, :local2
   

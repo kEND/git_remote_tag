@@ -3,16 +3,16 @@ require 'yaml'
 require 'rake/gempackagetask'
 
 spec = Gem::Specification.new do |s|
-  s.name                  = GitRemoteBranch::NAME
-  s.version               = GitRemoteBranch::VERSION::STRING
+  s.name                  = GitRemoteTag::NAME
+  s.version               = GitRemoteTag::VERSION::STRING
   s.summary               = "git_remote_branch eases the interaction with remote branches"
   s.description           = "git_remote_branch is a learning tool to ease the interaction with " +
                             "remote branches in simple situations."
 
-  s.authors               = ['Mathieu Martin', 'Carl Mercier']
-  s.email                 = "webmat@gmail.com"
-  s.homepage              = "http://github.com/webmat/git_remote_branch"
-  s.rubyforge_project     = 'grb'
+  s.authors               = ['Ken Barker']
+  s.email                 = "ken@edgecase.com"
+  s.homepage              = "http://github.com/kEND/git_remote_tag"
+  s.rubyforge_project     = ''
 
   s.has_rdoc              = true
   s.extra_rdoc_files     << 'README.rdoc'
@@ -21,7 +21,7 @@ spec = Gem::Specification.new do |s|
   s.test_files            = Dir['test/**/*'].reject{|f| f =~ /test_runs/}
   s.files                 = Dir['**/*'].reject{|f| f =~ /\Apkg|\Acoverage|\Ardoc|test_runs|\.gemspec\Z/}
   
-  s.executable            = 'grb'
+  s.executable            = 'grt'
   s.bindir                = "bin"
   s.require_path          = "lib"
   
@@ -34,7 +34,7 @@ Rake::GemPackageTask.new(spec) do |p|
   p.gem_spec = spec
 end
 
-TAG_COMMAND = "git tag -m 'Tagging version #{GitRemoteBranch::VERSION::STRING}' -a v#{GitRemoteBranch::VERSION::STRING}"
+TAG_COMMAND = "git tag -m 'Tagging version #{GitRemoteTag::VERSION::STRING}' -a v#{GitRemoteTag::VERSION::STRING}"
 task :tag_warn do
   puts  "*" * 40,
         "Don't forget to tag the release:",
@@ -53,15 +53,15 @@ task :gem => :tag_warn
 namespace :gem do
   desc "Update the gemspec for GitHub's gem server"
   task :github do
-    File.open("#{GitRemoteBranch::NAME}.gemspec", 'w'){|f| f.puts YAML::dump(spec) }
-    puts "gemspec generated here: #{GitRemoteBranch::NAME}.gemspec"
+    File.open("#{GitRemoteTag::NAME}.gemspec", 'w'){|f| f.puts YAML::dump(spec) }
+    puts "gemspec generated here: #{GitRemoteTag::NAME}.gemspec"
   end
   
   desc 'Upload gem to rubyforge.org'
   task :rubyforge => :gem do
     sh 'rubyforge login'
-    sh "rubyforge add_release grb grb '#{GitRemoteBranch::VERSION::STRING}' pkg/#{spec.full_name}.gem"
-    sh "rubyforge add_file grb grb #{GitRemoteBranch::VERSION::STRING} pkg/#{spec.full_name}.gem"
+    sh "rubyforge add_release grt grt '#{GitRemoteTag::VERSION::STRING}' pkg/#{spec.full_name}.gem"
+    sh "rubyforge add_file grt grt #{GitRemoteTag::VERSION::STRING} pkg/#{spec.full_name}.gem"
   end
   
   desc 'Install the gem built locally'
@@ -69,9 +69,9 @@ namespace :gem do
     sh "#{SUDO} gem install pkg/#{spec.full_name}.gem"
   end
   
-  desc "Uninstall version #{GitRemoteBranch::VERSION::STRING} of the gem"
+  desc "Uninstall version #{GitRemoteTag::VERSION::STRING} of the gem"
   task :uninstall do
-    sh "#{SUDO} gem uninstall -v #{GitRemoteBranch::VERSION::STRING} -x #{GitRemoteBranch::NAME}"
+    sh "#{SUDO} gem uninstall -v #{GitRemoteTag::VERSION::STRING} -x #{GitRemoteTag::NAME}"
   end
   
   if WINDOWS

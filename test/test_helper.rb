@@ -20,7 +20,7 @@ rescue LoadError => ex
   puts "Couldn't load optional test dependencies: #{ex.inspect}"
 end
 
-require File.join( [TEST_DIR] + %w{ .. lib git_remote_branch} )
+require File.join( [TEST_DIR] + %w{ .. lib git_remote_tag} )
 
 require "#{TEST_DIR}/helpers/in_dir"
 Dir[TEST_DIR+'/helpers/**/*.rb'].each{|f| require f} 
@@ -28,9 +28,9 @@ Dir[TEST_DIR+'/helpers/**/*.rb'].each{|f| require f}
 class Test::Unit::TestCase
   include MoreAssertions
 
-  attr_reader :grb
+  attr_reader :grt
   def setup
-    @grb = Object.new
-    @grb.send :extend, GitRemoteBranch
+    @grt = Object.new
+    @grt.send :extend, GitRemoteTag
   end
 end

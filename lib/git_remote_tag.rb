@@ -14,18 +14,18 @@ begin
 rescue Exception
 end
 
-grb_app_root = File.expand_path( File.dirname(__FILE__) + '/..' )
+grt_app_root = File.expand_path( File.dirname(__FILE__) + '/..' )
 
-$LOAD_PATH.unshift( grb_app_root + '/vendor' )
+$LOAD_PATH.unshift( grt_app_root + '/vendor' )
 require 'capture_fu'
 
-$LOAD_PATH.unshift( grb_app_root + '/lib' )
+$LOAD_PATH.unshift( grt_app_root + '/lib' )
 %w(monkey_patches constants  state param_reader version).each do |f|
   require f
 end
 
-module GitRemoteBranch
-  class InvalidBranchError < RuntimeError; end
+module GitRemoteTag
+  class InvalidTagError < RuntimeError; end
   class NotOnGitRepositoryError < RuntimeError; end
 
   COMMANDS = {
@@ -107,7 +107,7 @@ module GitRemoteBranch
   ALIAS_REVERSE_MAP = get_reverse_map(COMMANDS) unless defined?(ALIAS_REVERSE_MAP)
   
   def get_welcome
-    "git_remote_branch version #{VERSION::STRING}\n\n"
+    "git_remote_tag version #{VERSION::STRING}\n\n"
   end
 
   def get_usage
@@ -115,7 +115,7 @@ module GitRemoteBranch
   Usage:
 
 #{[:create, :publish, :rename, :delete, :track].map{|action|
-      "  grb #{action} branch_name [origin_server] \n\n"
+      "  grt #{action} tag_name [origin_server] \n\n"
     }  
   }
   
@@ -125,8 +125,8 @@ module GitRemoteBranch
   
   The explain meta-command: you can also prepend any command with the keyword 'explain'. Instead of executing the command, git_remote_branch will simply output the list of commands you need to run to accomplish that goal.
   Example: 
-    grb explain create
-    grb explain create my_branch github
+    grt explain create
+    grt explain create my_branch github
   
   All commands also have aliases:
   #{ COMMANDS.keys.map{|k| k.to_s}.sort.map {|cmd| 

@@ -29,12 +29,12 @@ module ShouldaUnitHelpers
     def should_return_help_for_parameters(params, context_explanation)
       context context_explanation do
         setup do
-          @p = grb.read_params params
+          @p = grt.read_params params
         end
         
         should "not even get to checking the current_branch" do
-          grb.expects(:get_current_branch).never
-          grb.read_params ['help']
+          grt.expects(:get_current_branch).never
+          grt.read_params ['help']
         end
         
         should "only return a hash specifying the action" do
@@ -49,7 +49,7 @@ module ShouldaUnitHelpers
       context "on an 'explain' command" do
         context "with no information provided other than the action" do
           setup do
-            @p = grb.read_params %w{explain create}
+            @p = grt.read_params %w{explain create}
           end
           
           should_set_explain_to         true
@@ -67,7 +67,7 @@ module ShouldaUnitHelpers
         
         context "with all information provided" do
           setup do
-            @p = grb.read_params %w{explain create specific_branch specific_origin}
+            @p = grt.read_params %w{explain create specific_branch specific_origin}
           end
           
           should_set_explain_to         true
