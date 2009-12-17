@@ -165,6 +165,8 @@ An attempt is made to require 2 more optional gems: redgreen and ruby-debug. If 
 
 === Supported platforms
 
+Update this for grt...
+
 git_remote_tag has been tested with the following configurations:
 
 - OS X Leopard / Ruby 1.8.6 / Git 1.5.4.3 and 1.6.0.2
