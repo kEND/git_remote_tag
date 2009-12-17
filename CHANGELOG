@@ -2,21 +2,21 @@
 
   Housekeeping
   - Support for a bunch of platforms has been added (Windows, Ubuntu, Ruby 1.9)
-  - git_remote_branch now has actual online documentation: grb.rubyforge.org
+  - git_remote_tag now has actual online documentation: grb.rubyforge.org
   - give useful error message if grb can't find the git executable
   
   Features
-  - track now works even if you already have a local branch of the same name
-    - it uses git config instead of branch --track in that case
+  - track now works even if you already have a local tag of the same name
+    - it uses git config instead of tag --track in that case
     - the difference can be seen by running
       - grb explain track master
-      - grb explain track non_existent_branch
+      - grb explain track non_existent_tag
   - Let you force the usage of a specific git executable by setting the environment variable GRB_GIT to point to it. It's pretty much undocumented for now, except for this mention :-) The tests for the useful error message use this feature. So it works.
 
 * Release 0.2.6 *
   Three new actual features
   - grb rename, contributed by Caio Chassot (caiochassot.com)
-  - grb publish, to make available and track a local branch
+  - grb publish, to make available and track a local tag
   - the --silent option, if you want to use grb in a script
   
   And other stuff
